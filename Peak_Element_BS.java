@@ -4,7 +4,7 @@ public class Peak_Element_BS {
         int n = arr.length;
         
         // manually write code for below edge cases
-        // 1. if array have only one element this would be my peak 
+        // 1. if array have only one element that element would be my peak 
         if(n == 1) return 0;
         // 2. if array would be in decreasing order    
         //    first element(arr[0]) would be my peak 
