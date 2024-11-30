@@ -25,7 +25,7 @@ public class Peak_Element_BS {
                 return mid;  // return mid which is the peak index
                              // and all the cases always terminated here
             }
-            // it this condition stisfy our peak element would be on the right
+            // if this condition stisfy our peak element would be on the right
             else if(arr[mid] > arr[mid-1]){
                 low = mid+1;
             }
