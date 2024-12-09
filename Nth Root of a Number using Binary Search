@@ -1,0 +1,102 @@
+Problem : Nth Root of a Number using Binary Search // Binary Search on the ans
+Problem Statement : Given two numbers N and M, find the Nth root of M. The nth root of a number M is defined as a number X when raised to the power N equals M. 
+If the 'nth root is not an integer, return -1.
+
+/****************/
+1. BruteForce Approach : we can solve this problem using Linear search 
+
+// Code
+
+/***********************************/
+
+public class Nth_Root_of_number_Brute {
+    // power exponentiual function we are calculating the power
+    public static long func(int b , int exp){
+        long ans = 1;  // Stores the result of b^exp (initially 1 since anything raised to power 0 is 1)
+        long base = b; // Holds the base value 'b'
+        while(exp > 0){
+            if(exp % 2 == 1){ // Check if the exponent is odd
+                exp --;         // Decrease the exponent by 1 (to make it even)
+                ans = ans*base;  // Multiply the current result by the base
+            }
+            else {   // If the exponent is even
+                exp /= 2;  // Halve the exponent
+                base = base * base;  // Square the base
+            }
+        }
+        return ans;
+    }  // TC : O(M) // SC : O(1)
+    public static int NthRoot(int n , int m){
+
+        for(int i = 1; i<=m; i++){
+            long val =  func(i, n);
+            if(val == (long)m) return i; // if the rootfound return i
+            // if the  value is greater than given number then break
+            //  coz further value would alwas be greater  
+            else if(val > (long)m) break; 
+        }
+        // if no root found return -1
+        return -1;
+
+    }
+    public static void main(String args[]){
+        int m = 27;
+        int n =  3;
+        int ans = NthRoot(n, m);
+        System.out.println("The  Nth root is : " + ans);
+    }
+    
+}
+
+/***********************/
+
+2. OPTIMAL SOLUTION
+
+NOTE : WHEN THE VALUE EXCEED like given number is m = 10^9 then 
+low = 1          mid = (10^9/2)       high = 10^9
+that time we can not store such large value that's why we have to write optimize code
+
+/*******************************/
+this function is calculating mid^n
+public class Nth_Root_Of_Number_Opt {
+     // A loop multiplies mid with itself n times to compute mid
+    //Return 1 if mid^n == m   // indicates that the current mid is root
+    //Return 0 if mid^n < m    // meaning the mid is too small, and the search should move right (increase low). & reduce the left half
+    //Return 2 if mid^n > m    // meaning the mid is too large, and the search should move left  (reduce high). & reduce the right half
+    // this method is applied when our search space exceed 
+
+    public static int func(int mid , int n , int m){
+          int ans = 1;
+          for(int i = 1; i <= n; i++){
+            ans = ans * mid;  // calculate one by one (mid*mid*mid)
+            if(ans > m) return 2; // if this condition true means if the ans is greater than m then return 2 otherwise again check for i++
+          }
+          if(ans == m) return 1; // if ans == m  (number ) then return 1
+          return 0; // if ans (ans < m ) then return 0
+    }
+    // use Binary Search on the search space
+    public static int NthRoot(int n , int m){
+        int low = 1 , high = m;
+        while(low <= high){
+            int mid = (low+high)/2;
+            // call the func which is calculating the root
+            int midN = func(mid, n, m);
+            if(midN == 1) return mid;   // if the current mid is our root then return the mid as an ans 
+            else if(midN == 0){
+                low =  mid+1;
+            }
+            else high = mid-1;
+        }
+        return -1; // if no nth root is found then return -1
+
+        // TC  : O(n*logM)  // SC : O(1)  // where O(logM) for Binary Search & O(n) to find (mid^n)
+    }
+    public static void main(String args[]){
+        int m = 27; // given  number
+        int n = 3; // we have to find the root of n times of a given number
+        int ans = NthRoot(n, m);
+        System.out.println("The nth root is : " +ans);
+    }
+    
+} 
+/******************************************************/
