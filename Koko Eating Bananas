@@ -1,0 +1,175 @@
+ #leetcode 875. Koko Eating Bananas
+Koko loves to eat bananas. There are n piles of bananas, the ith pile has piles[i] bananas. The guards have gone and will come back in h hours.
+Koko can decide her bananas-per-hour eating speed of k. Each hour, she chooses some pile of bananas and eats k bananas from that pile. If the pile has less than k bananas, she eats all of them instead and will not eat any more bananas during this hour.
+Koko likes to eat slowly but still wants to finish eating all the bananas before the guards return.
+Return the minimum integer k such that she can eat all the bananas within h hours. 
+
+Example 1:
+
+Input: piles = [3,6,7,11], h = 8
+Output: 4
+Example 2:
+
+Input: piles = [30,11,23,4,20], h = 5
+Output: 30
+Example 3:
+
+Input: piles = [30,11,23,4,20], h = 6
+Output: 23
+ 
+Constraints:
+
+1 <= piles.length <= 104
+piles.length <= h <= 109
+1 <= piles[i] <= 109
+
+/**************************/
+
+Approachse and Steps to Solve 
+
+
+1 Brute Force : 
+
+/*******************************/
+public class Koko_Eating_Banana_Brute {
+     
+
+     // that maximum is used to defined our range
+     public static int findMax(int piles[]){
+
+        // why take MIN_VALUE coz we want maximum and every element in the piles[] 
+        // would be always greater than the (-)infinity
+        int maximum = Integer.MIN_VALUE; 
+
+        // run a loop from to N
+        for(int i = 0; i<piles.length; i++){
+             maximum = Math.max(maximum , piles[i]);
+        }
+        return maximum;
+    }
+    // create a function whic calculate rate of Banana (banana/hour) 
+    public static int caculateTotalhour(int piles[] , int hourly){
+        int totalH = 0 ; // to store total rate of banana
+        for(int i = 0; i < piles.length; i++){
+            
+            // Math.ceil : becuase we want ceil value of number
+            // calculate total banana/hour
+            totalH += Math.ceil((double)piles[i] / (double)hourly);
+        }
+        return totalH;
+    }
+
+    // create function to calculate minimum rate of banana 
+    public static int maximumRatetoEatbanana(int piles[] , int hours){
+
+        // find maxiumum of piles[]
+         int maxi = findMax(piles);
+        
+         // run a loop from 1 to maxi
+        for(int i = 1; i<= maxi; i++){
+
+            // call the function which is calculating total banana/hour
+            //and pass piles array and i to it
+            int reqtime = caculateTotalhour(piles, i);
+            
+            // if the required time comes under deadline return i
+            // maens i/rate koko takes times to finish all banana
+            if(reqtime <= hours){
+                return i;
+            }
+        }
+        // otherwise 
+        return maxi;
+    }
+       // TC : O(N) * O(max(piles))    // SC : O(1)
+       // where max(a[]) is the maximum element in the array and N = size of the array.
+      //   Reason: We are running nested loops. The outer loop runs for max(a[]) times in the worst case and the inner loop runs for N times.
+    public static void main(String args[]){
+        int piles[] = {7, 15, 6, 3};
+        int hours = 8;
+        int ans = maximumRatetoEatbanana(piles, hours);
+        System.out.println("Koko should take atleast : " +ans+ " bananas/hr.");
+    }
+    
+}
+/*************************************/
+
+
+CAN WE OPTIMIZE IT It :  YES WE CAN 
+
+2 OPTIMAL APPROACH : USING BINARY SEARCH  : we use binary search where range is defined and  possible & not possible case available
+
+/*****************************************/
+
+public class Koko_Eating_Banana_Opt {
+
+    // create a funtion whic find the maximum element in piles [] array
+    // that maximum is used to defined our range
+    public static int findMax(int piles[]){
+
+        // why take MIN_VALUE coz we want maximum and every element in the piles[] 
+        // would be always greater than the (-)infinity
+        int maximum = Integer.MIN_VALUE; 
+
+        // run a loop from to N
+        for(int i = 0; i<piles.length; i++){
+             maximum = Math.max(maximum , piles[i]);
+        }
+        return maximum;
+
+    }
+    // creating  a funtion to calculate banana/hour which would coco eat
+    public static int calcTotalhour(int piles[] , int hourly){
+        int totalHour = 0; // to store total hour to eat all banana
+        
+       // run  a loop from 0 to N 
+        for(int i = 0 ; i < piles.length; i++){
+            // calculate total banana/hour which koko would take time to eat
+            // Math.ceil : we are using this coz we want ceil value
+            // means if our ans is (1.5) : ceil of (1.5) is (2)
+            totalHour += Math.ceil((double)piles[i] / (double)hourly);
+        }
+        return totalHour;
+    } 
+
+    // creating a function which will calculate minimum time to eat all bananas 
+    public static int maximumRatetoEatbanana(int piles[] , int hours){
+        
+        // Use binary search range from low = 1 , high = maximum
+        int low = 1 , high = findMax(piles); // call max function and pass piles[] to maxfunction which will find the max
+        int ans = Integer.MAX_VALUE; // to store minimum integer value
+        while(low <= high){
+            int mid = (low+high)/2;
+
+            // call funtion which calculate banana/hour and pass the mid value & array 
+            // and store it on totalH
+            int totalH = calcTotalhour(piles, mid);
+
+            // conditions if our totalHour under the deadline(hours)
+            if(totalH <= hours){
+                // might be my ans
+                ans = mid;
+                high = mid-1; // reduce right half and look on the left for minimum integer ans 
+            }
+            // when time limit exceed then we increase low
+            else low = mid+1; // reduce left half and look on the right for find max possible integer
+        }
+        return ans;  // return minimum integer which koko take to eat all banana
+
+        // one point we can observe here after finishing while loop 
+        // low always point to our ans so we can return low also
+    }
+
+    // TC : O(N)*O(log(maximum(piles[]))) where maximum(a[]) is the maximum element in the array and N = size of the array.
+    // SC : O(1)
+    public static void main(String args[]){
+        int piles[] = {7, 15, 6, 3};
+        int hours = 8;
+        int ans = maximumRatetoEatbanana(piles, hours);
+        System.out.println("Koko should eat atleast : " +ans+ " banana/hr .");
+    }
+    
+}
+
+/******************************************************************************/
+
