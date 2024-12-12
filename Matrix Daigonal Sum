@@ -1,0 +1,128 @@
+#leetcode 1572. Matrix Diagonal Sum
+PROBLEM STATEMENT :Given a square matrix mat, return the sum of the matrix diagonals
+Only include the sum of all the elements on the primary diagonal and all the elements on the secondary diagonal that are not part of the primary diagonal.
+
+Input: mat = [[1,2,3],
+              [4,5,6],
+              [7,8,9]]
+Output: 25
+Explanation: Diagonals sum: 1 + 5 + 9 + 3 + 7 = 25
+Notice that element mat[1][1] = 5 is counted only once.
+Example 2:
+
+Input: mat = [[1,1,1,1],
+              [1,1,1,1],
+              [1,1,1,1],
+              [1,1,1,1]]
+Output: 8
+
+/**********************************/
+
+APPROACHES TO SOLVE 
+NOTE : it only apply on the square matrix  means (nxn)
+# ASSUME  ....DAIGONAL SUM = PD(primary daigonal sum) + SD(Secondary daigonal sum)
+
+#Edge case : if the n is odd means matrix is of (3x3) then there might be a problem of calculating it
+
+to avoid this overlapping problem we first calculate PD and 
+CONDITION TO CALCULATE pd : IF (i == j) then we calculate PD
+
+
+2 we calculate SD in which PD should not be present
+CONDITION TO CALCULATE sd : if (i + J == n-1) then we calculate SD sum
+
+
+
+/*****************************************/
+1. BRUTE FORCE : we can solve this problem using standard matrix search technique
+
+TimeComplexity : O(N^2)  // SC : O(1)
+
+
+/***********************************************/
+public class Daigonal_Sum_of_Mat_Brute {
+
+    public static int daigonalSum(int mat[][]){
+        int n = mat.length; // size of row
+        int m = mat[0].length; // size of column
+        int sum = 0 ; // to store daigonal sum
+        for(int i = 0; i<n; i++){
+            for(int j = 0; j<m; j++){
+                // calculate primary daigonal (PD)
+                // PD : if (i == j) if our mat is nXn then our PD daigonal would follow this
+                if(i == j){
+                    sum += mat[i][j];
+                }
+                
+                // Calculate Secondary daigonal
+                // SD : i+j = n-1 // if matrix of i+j will be equal to n-1 then we 
+                // add to this in sum but if i !=j 
+                else if (i + j == n-1){
+                   // if i != j means avoid overlapping elements
+                   if( i != j){
+                    sum += mat[i][j];
+                   }
+                }
+            }
+        }
+        // return total daigonal sum
+        return sum;
+    }
+    // TC : O(N^2) // SC : O(1)
+    public static void main(String args[]){
+        int mat[][] = {{1,2,3,4},
+                       {5,6,7,8},
+                       {9,10,11,12},
+                       {13,14,15,16}};
+     int ans = daigonalSum(mat);
+     System.out.println("The daigonal sum of square matrix : "+ans);                  
+    }
+}
+
+/**************************************************************************/
+
+
+2 . OPTIMAL APPROACH : we can solve this problem using single loop
+
+  TimeComplexity : O(N) // SC : O(1)
+
+
+/******************************************************************************/
+public class Daigonal_Sum_of_Mat_Opt {
+    public static int daigonalSum(int mat[][]){
+        int n = mat.length;  // size of row
+        int sum = 0; // to store total daigonal sum
+        for(int i = 0; i<n; i++){
+
+            // step1 . calculate primary daigonal sum
+            // PD : (i==j) but here we are using one loop so here condition for 
+            // PD would be ( i==i)
+            sum += mat[i][i];
+
+            // step2. calculate Secondary daigonal sum
+            // if n is odd means if we have mat of (nxn) = (3x3) then there will a issue 
+            // arise of overlapping to avoid this overlapping
+            // we calculate Secondary 
+            if(i != n-i-1){
+                // calculate PD sum
+                sum += mat[i][n-1-i];
+            }
+        }
+        // return total daigonal sum
+        return sum;
+    }  // TC : O(N) // SC : O(1)
+    public static void main(String args[]){
+        int mat[][] = {{1,2,3,4},
+                       {5,6,7,8},
+                       {9,10,11,12},
+                       {13,14,15,16}};
+     int ans = daigonalSum(mat);
+     System.out.println("The daigonal sum of square matrix : "+ans);  
+    }
+}
+
+
+/************************************************************************/
+
+
+ 
