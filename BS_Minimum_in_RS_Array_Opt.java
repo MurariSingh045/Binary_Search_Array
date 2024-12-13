@@ -13,14 +13,16 @@ public class BS_Minimum_in_RS_Array_Opt {
             //the minimum in that search space:
             if(arr[low] <= arr[high]){
                 ans = Math.min(ans , arr[low]);
-                break;
+                break;  // we do not need to perform the binary search 
             }
-            // if left half is sorted
+            // if left half is sorted  we take low as minimum and trim the left half
+            // 
             if(arr[low] <= arr[mid]){
                 ans = Math.min(ans , arr[low]);
                 low = mid +1;
             }
-            // if the right half is sorted
+            // if the left half is not sorted our right half always be sorted that time take mid as low 
+           // and trim the right half
             else{
                 ans = Math.min(ans , arr[mid]);
                 high = mid-1;
