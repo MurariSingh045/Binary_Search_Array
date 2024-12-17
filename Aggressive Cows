@@ -1,0 +1,199 @@
+You are given an array with unique elements of stalls[], which denote the position of a stall. You are also given an integer k which denotes the number of aggressive cows. Your task is to assign stalls to k cows such that the minimum distance between any two of them is the maximum possible.
+
+Examples :
+
+Input: stalls[] = [1, 2, 4, 8, 9], k = 3
+Output: 3
+Explanation: The first cow can be placed at stalls[0], 
+the second cow can be placed at stalls[2] and 
+the third cow can be placed at stalls[3]. 
+The minimum distance between cows, in this case, is 3, which also is the largest among all possible ways.
+Input: stalls[] = [10, 1, 2, 7, 5], k = 3
+Output: 4
+Explanation: The first cow can be placed at stalls[0],
+the second cow can be placed at stalls[1] and
+the third cow can be placed at stalls[4].
+The minimum distance between cows, in this case, is 4, which also is the largest among all possible ways.
+
+
+
+Input: stalls[] = [2, 12, 11, 3, 26, 7], k = 5
+Output: 1
+Explanation: Each cow can be placed in any of the stalls, as the no. of stalls are exactly equal to the number of cows.
+The minimum distance between cows, in this case, is 1, which also is the largest among all possible ways.
+Constraints:
+2 <= stalls.size() <= 106
+0 <= stalls[i] <= 108
+1 <= k <= stalls.size()
+
+
+
+/**********************************************************/
+
+APPROACHES TO SOLVE 
+
+
+
+/*********************************************************/
+
+1 BRUTE FORCE : we can solve this problem using Linear Search 
+
+1. First, we will sort the given stalls[] array.
+2. We will use a loop(say i) to check all possible distances.
+3. Next, inside the loop, we will send each distance, i, to the function canWePlace() function to check if it is possible to place the cows.
+4. We will return (i-1), where i is the minimum distance for which the function canWePlace() returns false. Because (i-1) is the maximum distance for which we can place all the cows and for the distances >= i, it becomes impossible.
+5. Finally, if we are outside the loop, we can conclude the minimum possible distance should be max(stalls[])-min(stalls[]). And we will return this value.
+
+
+
+
+
+Time Complexity: O(NlogN) + O(N *(max(stalls[])-min(stalls[]))), where N = size of the array, max(stalls[]) = maximum element in stalls[] array, min(stalls[]) = minimum element in stalls[] array.
+Reason: O(NlogN) for sorting the array. We are using a loop from 1 to max(stalls[])-min(stalls[]) to check all possible distances. Inside the loop, we are calling canWePlace() function for each distance. Now, inside the canWePlace() function, we are using a loop that runs for N times.
+
+Space Complexity: O(1) as we are not using any extra space to solve this problem.
+
+
+/**************************************************************************************************************/
+
+BRUTE FORCE CODE BELOW 
+
+import java.util.Arrays;
+
+public class Aggresive_Cows_Brute {
+
+    // Function to check if we can place cows with at least 'dist' distance apart
+    public static boolean canWereplace(int stall[], int dist, int cows) {
+        int n = stall.length; // Size of the stall array
+        int cntCows = 1; // Start by placing the first cow in the first stall
+        int lastCow = stall[0]; // Store the position of the last cow placed
+
+        // Iterate over the remaining stalls to try placing cows
+        for (int i = 1; i < n; i++) {
+            // Check if the current stall is far enough to place the next cow
+            if (stall[i] - lastCow >= dist) {
+                cntCows++; // Place the cow in the current stall
+                lastCow = stall[i]; // Update the position of the last placed cow
+            }
+
+            // If we have placed all the cows successfully, return true
+            if (cntCows >= cows) return true;
+        }
+
+        // If we couldn't place all cows, return false
+        return false;
+    }
+
+    // Function to find the maximum possible minimum distance between cows (Brute Force)
+    public static int agressiveCows(int stalls[], int cows) {
+        int n = stalls.length; // Size of the stalls array
+        Arrays.sort(stalls); // Sort the stalls in ascending order for proper placement
+        
+        int limit = stalls[n - 1] - stalls[0]; // Maximum distance possible between first and last stall
+
+        // Brute force approach: check every possible distance from 0 to limit
+        for (int i = 0; i <= limit; i++) {
+            // If placing cows with distance 'i' is NOT possible
+            if (canWereplace(stalls, i, cows) == false) {
+                return (i - 1); // Return the previous valid distance (i.e., maximum possible distance)
+            }
+        }
+
+        // If we never fail to place cows, return the maximum distance
+        return limit; // Maximum possible minimum distance
+    }
+
+    // Main function to test the brute-force approach
+    public static void main(String args[]) {
+        int stalls[] = {0, 3, 4, 7, 10, 9}; // Positions of stalls
+        int cows = 4; // Number of cows to place
+        
+        // Call the function to find the maximum possible minimum distance
+        int ans = agressiveCows(stalls, cows);
+        
+        // Print the result
+        System.out.println("The maximum possible minimum distance is: " + ans);
+    }
+}
+
+
+/***********************************************************************************/
+
+
+OPTIMAL APPROACH : we can solve this problem using BINARY SEARCH 
+
+
+
+
+Time Complexity: O(NlogN) + O(N * log(max(stalls[])-min(stalls[]))), where N = size of the array, max(stalls[]) = maximum element in stalls[] array, min(stalls[]) = minimum element in stalls[] array.
+Reason: O(NlogN) for sorting the array. We are applying binary search on [1, max(stalls[])-min(stalls[])]. Inside the loop, we are calling canWePlace() function for each distance, ‘mid’. Now, inside the canWePlace() function, we are using a loop that runs for N times.
+
+Space Complexity: O(1) as we are not using any extra space to solve this problem.
+
+
+/***************************************************************************/
+
+BINARY SEARCH CODE BELOW
+
+
+import java.util.Arrays;
+
+public class Agressive_Cows_Opt {
+
+    // Function to check if we can place the cows with at least 'dist' distance apart
+    public static boolean canWereplace(int stalls[], int dist, int cows) {
+        int n = stalls.length; // Size of the stalls array
+        int cntCows = 1; // Start by placing the first cow in the first stall
+        int lastCow = stalls[0]; // The position where the last cow was placed
+
+        // Loop through all stalls to check for cow placement
+        for (int i = 1; i < n; i++) {
+            // Check if the current stall can accommodate the next cow
+            if (stalls[i] - lastCow >= dist) {
+                cntCows++; // Place the next cow
+                lastCow = stalls[i]; // Update the last cow position
+            }
+            // If we have placed enough cows, return true
+            if (cntCows >= cows) return true;
+        }
+        // If we couldn't place all the cows, return false
+        return false;
+    }
+
+    // Function to determine the maximum possible minimum distance between cows
+    public static int agressiveCows(int stalls[], int cows) {
+        int n = stalls.length; // Size of the stalls array
+        Arrays.sort(stalls); // Sort the stalls in ascending order to apply binary search
+        
+        int ans = -1; // Variable to store the result (maximum possible minimum distance)
+        int low = 0; // Minimum possible distance
+        int high = stalls[n - 1] - stalls[0]; // Maximum possible distance (max - min)
+
+        // Binary search on the distance range
+        while (low <= high) {
+            int mid = (low + high) / 2; // Middle point of the search space (potential answer)
+
+            // Check if placing cows with at least 'mid' distance is feasible
+            if (canWereplace(stalls, mid, cows)) {
+                ans = mid; // Update the answer since 'mid' distance is possible
+                low = mid + 1; // Search for a larger distance (right half)
+            } else {
+                high = mid - 1; // Search for a smaller distance (left half)
+            }
+        }
+
+        // Return the maximum possible minimum distance found
+        return ans;
+    }
+
+    // Main method to test the aggressive cows implementation
+    public static void main(String args[]) {
+        int stalls[] = {0, 3, 4, 7, 10, 9}; // Positions of stalls
+        int cows = 4; // Number of cows to place
+        int ans = agressiveCows(stalls, cows); // Find the result using the function
+        System.out.println("The maximum possible minimum distance is: " + ans);
+    }
+}
+
+
+/***********************************************************************************************************************/
