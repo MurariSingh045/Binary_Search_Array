@@ -1,0 +1,126 @@
+Given a sorted array of distinct positive integers arr[], we need to find the kth positive number that is missing from arr[].  
+
+Examples :
+
+Input: arr[] = [2, 3, 4, 7, 11], k = 5
+Output: 9
+Explanation: Missing are 1, 5, 6, 8, 9, 10… and 5th missing number is 9.
+Input: arr[] = [1, 2, 3], k = 2
+Output: 5
+Explanation: Missing are 4, 5, 6… and 2nd missing number is 5.
+Input: arr[] = [3, 5, 9, 10, 11, 12], k = 2
+Output: 2
+Explanation: Missing are 1, 2, 4, 6… and 2nd missing number is 2.
+Constraints:
+1 <= arr.size() <= 105
+1 <= k <= 105
+1 <= arr[i]<= 106
+
+
+
+/*******************************************************************/
+
+APPROACHES TO SOLVE:
+
+/********************************************************************/
+
+1 BRUTE FORCE : 
+
+// TC : O(N) // SC : O(1)
+
+
+/*********************************************************************/
+
+// Java program to find the Kth missing number in a sorted array
+public class Kth_Missing_number_Brute {
+    
+    // Function to calculate the Kth missing number
+    public static int missingK(int[] vec, int k) {
+        int n = vec.length; // Length of the array
+        
+        // Traverse the array to determine the Kth missing number
+        for (int i = 0; i < n; i++) {
+            // If the current array element is less than or equal to K,
+            // it means all numbers up to this element are already considered
+            // so we increment K to account for this
+            if (vec[i] <= k) {
+                k++;
+            } else {
+                // If the current array element is greater than K, 
+                // we have already found the Kth missing number
+                break;
+            }
+        }
+        // Return the final value of K which is the Kth missing number
+        return k;
+    }
+
+    public static void main(String[] args) {
+        // Input array and the value of K
+        int[] vec = {4, 7, 9, 10}; // A sorted array of numbers
+        int k = 4; // Find the 4th missing number
+        
+        // Call the function and store the result
+        int ans = missingK(vec, k);
+        
+        // Print the result
+        System.out.println("The missing number is: " + ans);
+    }
+}
+
+
+/*************************************************************************************/
+
+OPTIMAL APPROACH : USING BINARY SEARCH  
+
+TIME COMPLEXITY : O(logN)  // SC : O(1)
+
+/***********************************************************************************/
+
+public class Kth_Missing_Number_Opt {
+
+    // we can not apply typically BinarySearch & BS on ans directly becuase
+    // in this problem we have to deal with missing number
+    // that's why we calculate the missing no of 
+    // step1 . find two nearable index in between our ans will lie.
+        public static int missingK(int[] vec,  int k) {
+            int n = vec.length;
+            int low = 0, high = n - 1;
+            while (low <= high) {
+                int mid = (low + high) / 2;
+
+                // calculate missing number
+                // missing no = current(arr[mid])- ideal(index)
+                int missing = vec[mid] - (mid + 1);
+                // if missing index is lesser than kth index
+                // reduce left half becuase before left there will also lesser than kth
+                if (missing < k) {
+                    low = mid + 1;
+                }
+                 // if the missing is greater than kth then reduce right half becuase
+                 // after right half all missing no would always greater 
+                else { 
+                    high = mid - 1;
+                }
+            }
+            // here our low is pointing to greter than kth & high pointing to lesser than kth
+            // but initially low is pointing lesser and high is pointing greter
+
+            // we can either return (k+high+1) or (low+1) becuase always low will pointing (high +1)
+            // we are calculating (k+high+1) using formula
+            // we can also return (high + more(k-missing)) but there might be an issue 
+            // suppose we have arr[] = [4 ,6,8] and our k=3 that time high will point (-infinity)
+            // that's why we requred this formula
+            return k + high + 1;
+        }
+        // TC : O(logN)  // SC : O(1)
+        public static void main(String[] args) {
+            int[] vec = {4, 7, 9, 10};
+            int k = 4;
+            int ans = missingK(vec,  k);
+            System.out.println("The missing number is: " + ans);
+    }
+}
+
+
+/***********************************************************************************************/
