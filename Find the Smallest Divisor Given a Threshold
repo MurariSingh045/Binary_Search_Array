@@ -1,0 +1,121 @@
+Problem : #leetcode 1283. Find the Smallest Divisor Given a Threshold
+
+Problem link : https://leetcode.com/problems/find-the-smallest-divisor-given-a-threshold/description/
+
+Problem Statement : Given an array of integers nums and an integer threshold, we will choose a positive integer divisor, divide all the array by it, and sum the division's result. Find the smallest divisor such that the result mentioned above is less than or equal to threshold.
+
+Each result of the division is rounded to the nearest integer greater than or equal to that element. (For example: 7/3 = 3 and 10/2 = 5).
+
+The test cases are generated so that there will be an answer.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,5,9], threshold = 6
+Output: 5
+Explanation: We can get a sum to 17 (1+2+5+9) if the divisor is 1. 
+If the divisor is 4 we can get a sum of 7 (1+1+2+3) and if the divisor is 5 the sum will be 5 (1+1+1+2). 
+Example 2:
+
+Input: nums = [44,22,33,11,1], threshold = 5
+Output: 44
+ 
+
+Constraints:
+
+1 <= nums.length <= 5 * 104
+1 <= nums[i] <= 106
+nums.length <= threshold <= 106
+
+
+/*********************************************************************************************************/
+
+Approaches to solve :
+
+/***********************************************************************************************************/
+
+1 . BruteForce : we can solve this problem using nested loop
+ 
+TC : O(maxi) * O(N)
+SC : O(1)
+
+/////////////////////////////////////////////////////////////////
+
+  int n = nums.length;
+        int maxi = Integer.MIN_VALUE;
+        for(int i = 0; i<n; i++){
+            maxi = Math.max(maxi , nums[i]);
+        }
+
+        // step2 run a loop from 1 to maxi
+        for(int d = 1; d <= maxi; d++){  // here d = divisor
+            int sum = 0; // calculate divisor sum
+            for(int j = 0; j < n; j++){
+                sum += Math.ceil((double)(nums[j]) / (double)(d));
+            }
+              // if the sum is less than or equal to the threshold
+              // we can return d coz it would be our minimum divisor
+                if(sum <= threshold) return d;
+            
+        }
+        // if no minimum divisor found return -1
+        return -1;   // TC : O(maxi) X O(n)   // SC : O(1)
+
+/***************************************************************************************************/
+
+2. Optimal Approach : we can solve this problem using Binary Search 
+
+TC : O(log(maxi)) * O(N)
+SC : O(1)
+
+#steps
+1. create a func which calculate sumOfDivisor
+2. find range from (low = 1 to high = maxi)
+3. run loop & calculate mid
+4. calculate sum & if(sum <= threshold) return mid and reduce right half for minimum divisor
+5. else reduce left half
+
+
+////////////////////////////////////////////////////////////////
+
+     int m = arr.length;
+        int sum = 0; // store sum of divisor
+        for(int i = 0; i < m ; i++){
+
+            sum += Math.ceil((double)(arr[i]) / (double)(d));
+        }
+
+        return sum; // sum of divisor
+
+    }
+
+    public int smallestDivisor(int[] nums, int threshold) {
+
+      int n =  nums.length; // size of the array
+      int ans = -1; // to store minimum divisor
+    
+      // step2 . find maximum element
+      int maxi = Integer.MIN_VALUE;
+      for(int i = 0; i < n; i++){
+        maxi = Math.max(maxi , nums[i]); // calculate maximum value element
+      }
+
+     // step3. find range
+     int low = 1 , high = maxi;
+
+     while(low <= high){
+        int mid = (low+high)/2;
+
+        // call sum of divisor function
+        if(sumofDiv(nums , mid) <= threshold){
+            ans = mid;
+            high = mid-1; // skip right half and look on the left for mimimum
+        }
+        // if divisor sum greater than threshold
+        else low = mid+1; // reduce left half and look on the right for maximum
+     }
+
+     return ans;  // TC : O(log(max)) * O(N)  // SC : O(1)
+
+/*****************************************************************************************************/
