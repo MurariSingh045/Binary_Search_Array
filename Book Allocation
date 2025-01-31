@@ -219,6 +219,7 @@ public class Solution {
         
         // step 1. edge case : book allocation impossible
         if( m > n ) return -1;
+        // int ans = -1; // to store fianl ans
 
         // step 2 find maximum element & sum of all elements
         // which will be our range
@@ -230,9 +231,12 @@ public class Solution {
             int noOfStudent = countStudent(arr , mid);
 
             if(noOfStudent > m) low = mid+1; // reduce left half 
-            else high = mid-1;  // reduce right half 
+            else{
+                //ans = mid; // add mid to ans
+                high = mid-1;  // reduce right half 
+            }
         }
-         
+        //we can either return ans or low here
         return low; // here low is pointing to the ans coz of opposite polarity
     }
 }
