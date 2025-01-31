@@ -1,0 +1,240 @@
+Problem :  Allocate Books
+
+Problem link : https://www.naukri.com/code360/problems/allocate-books_1090540?utm_source=youtube&utm_medium=affiliate&utm_campaign=codestudio_Striver_BinarySeries&leftPanelTabValue=PROBLEM
+
+Problem Statement : Given an array ‘arr’ of integer numbers, ‘arr[i]’ represents the number of pages in the ‘i-th’ book.
+
+
+
+There are ‘m’ number of students, and the task is to allocate all the books to the students.
+
+
+
+Allocate books in such a way that:
+
+1. Each student gets at least one book.
+2. Each book should be allocated to only one student.
+3. Book allocation should be in a contiguous manner.
+
+
+You have to allocate the book to ‘m’ students such that the maximum number of pages assigned to a student is minimum.
+
+
+
+If the allocation of books is not possible, return -1.
+
+
+
+Example:
+Input: ‘n’ = 4 ‘m’ = 2 
+‘arr’ = [12, 34, 67, 90]
+
+Output: 113
+
+Explanation: All possible ways to allocate the ‘4’ books to '2' students are:
+
+12 | 34, 67, 90 - the sum of all the pages of books allocated to student 1 is ‘12’, and student two is ‘34+ 67+ 90 = 191’, so the maximum is ‘max(12, 191)= 191’.
+
+12, 34 | 67, 90 - the sum of all the pages of books allocated to student 1 is ‘12+ 34 = 46’, and student two is ‘67+ 90 = 157’, so the maximum is ‘max(46, 157)= 157’.
+
+12, 34, 67 | 90 - the sum of all the pages of books allocated to student 1 is ‘12+ 34 +67 = 113’, and student two is ‘90’, so the maximum is ‘max(113, 90)= 113’.
+
+We are getting the minimum in the last case.
+
+Hence answer is ‘113’.
+Detailed explanation ( Input/output format, Notes, Images )
+Sample Input 1:
+4 2
+12 34 67 90
+Sample Output 1:
+113
+Explanation of sample input 1:
+All possible ways to allocate the ‘4’ books to '2' students are:
+
+12 | 34, 67, 90 - the sum of all the pages of books allocated to student 1 is ‘12’, and student two is ‘34+ 67+ 90 = 191’, so the maximum is ‘max(12, 191)= 191’.
+
+12, 34 | 67, 90 - the sum of all the pages of books allocated to student 1 is ‘12+ 34 = 46’, and student two is ‘67+ 90 = 157’, so the maximum is ‘max(46, 157)= 157’.
+
+12, 34, 67 | 90 - the sum of all the pages of books allocated to student 1 is ‘12+ 34 +67 = 113’, and student two is ‘90’, so the maximum is ‘max(113, 90)= 113’.
+
+We are getting the minimum in the last case.
+
+Hence answer is ‘113’.
+Sample Input 2:
+5 4
+25 46 28 49 24
+Sample Output 2:
+71
+Explanation of sample input 2:
+All possible ways to allocate the ‘5’ books to '4' students are:
+
+25 | 46 | 28 | 49 24 - the sum of all the pages of books allocated to students 1, 2, 3, and 4 are '25', '46', '28', and '73'. So the maximum is '73'.
+
+25 | 46 | 28 49 | 24 - the sum of all the pages of books allocated to students 1, 2, 3, and 4 are '25', '46', '77', and '24'. So the maximum is '77'.
+
+25 | 46 28 | 49 | 24 - the sum of all the pages of books allocated to students 1, 2, 3, and 4 are '25', '74', '49', and '24'. So the maximum is '74'.
+
+25 46 | 28 | 49 | 24 - the sum of all the pages of books allocated to students 1, 2, 3, and 4 are '71', '28', '49', and '24'. So the maximum is '71'.
+
+We are getting the minimum in the last case.
+
+Hence answer is ‘71’.
+Expected time complexity:
+The expected time complexity is O(n * log(s)), where ‘n’ is the number of integers in the array ‘arr’ and ‘s’ is the sum of all the elements of ‘arr’.
+
+Constraints:
+2 <= 'n' <= 10 ^ 3
+1 <= 'm' <= 10 ^ 3
+1 <= 'arr[i]' <= 10 ^ 9
+The sum of all arr[i] does not exceed 10 ^ 9.
+
+Where ‘n’ denotes the number of books and ‘m’ denotes the number of students. ‘arr[i]’ denotes an element at position ‘i’ in the sequence.
+
+Time limit: 1 second
+
+
+
+/********************************************************************************************************/
+
+AAPROACHES TO SOLVE 
+
+/***************************************************************************************************/
+
+1. BruteForce : we can solve this problem using linear Search
+
+TC : O(sum-max+1)*O(N)
+SC : O(1)
+
+//////////////////////////////////////////////////////////////////
+
+public class Main{
+    public static int countStudent(int arr[] , int pages){
+        int n = arr.length;
+        int student = 1; // no of student
+        int pageStudent = 0; // allocate page to student initially it is zero
+        for(int i = 0; i < n; i++){
+            if(pageStudent + arr[i] <= pages){
+                // allocate page to current student
+                pageStudent += arr[i];
+            }
+            else{
+                // allocate page to next student
+                student++; // next student
+                pageStudent = arr[i]; // allocate page to next student
+            }
+        }
+        // return all student with page allocated 
+        return student;
+    }
+    
+    // create function which will find pages which would allocated to student
+    public static int findPages(int arr[] , int m){
+        int n = arr.length; // size of array
+        
+        // handle edge cases
+         if(n > m) return -1;
+        
+        // step 1 . find maximum element of array
+        int low = Integer.MIN_VALUE;
+        for(int i = 0 ; i < n; i++){
+            low = Math.max(low , arr[i]);
+        }
+        
+        // step2 find sum of array elements
+        int high =0;
+        for(int i =0; i < n; i++){
+            high += arr[i];
+        }
+        
+        // step3 run a loop from maxi to sum
+        for(int pages = low ; pages <= high ; pages++){
+            
+            if(countStudent(arr , pages) == m){
+                // this page will allocate in all students with minumum pages
+                return pages;
+            }
+        }
+        // if no pages found return maximum pages 
+        return low;
+    }
+    public static void main(String args[]){
+        // here array elements == pages
+        int arr[] = {25, 46, 28, 49, 24};
+        int m = 4; // no of student 
+        int ans = findPages(arr , m);
+        System.out.println(ans);
+    }
+}
+
+/************************************************************************************************************/
+
+2. Optimal : we can solve this problem using BinarySearch 
+ 
+why binary Search : coz here is case of minimum of maximum
+
+TC : O(log(sum - max+1))*O(N)
+SC : O(1)
+
+#steps
+1. Handle Edge cases
+2. find maximum element of array
+3. find sum of array
+4. run a loop from low = maxi and high = sum
+5. create a function which will countStudents for book allocation with minimum pages and call it
+6. reduce right half if we can allocate book with (less <= m) students
+7. reduce left hald if we can allocate book with( > m) students
+8. return pages
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Solution {
+     
+     public static int countStudent(ArrayList<Integer> arr , int pages){
+         int n = arr.size();
+         
+         int student = 1; // student 1
+         int pageStudent = 0; // right now student has 0 page allocated
+         for(int i = 0; i < n; i++){
+             if(pageStudent + arr.get(i) <= pages){
+                 // add pages to current student
+                 pageStudent += arr.get(i);
+             }
+             // if the pages exceed
+             else{
+                 // add pages to next student 
+                 student++; // next student 
+                 pageStudent = arr.get(i); // adding pages to next student
+             }
+          
+         }
+           // return all students with maximum pages allocated
+            return student;
+     }
+    public static int findPages(ArrayList<Integer> arr, int n, int m) {
+        
+        // step 1. edge case : book allocation impossible
+        if( m > n ) return -1;
+
+        // step 2 find maximum element & sum of all elements
+        // which will be our range
+        int low = Collections.max(arr);
+        int high = arr.stream().mapToInt(Integer::intValue).sum();
+
+        while(low <= high){
+            int mid = (low + high)/2;
+            int noOfStudent = countStudent(arr , mid);
+
+            if(noOfStudent > m) low = mid+1; // reduce left half 
+            else high = mid-1;  // reduce right half 
+        }
+         
+        return low; // here low is pointing to the ans coz of opposite polarity
+    }
+}
+
+/**********************************************************************************************************/
